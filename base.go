@@ -3,7 +3,7 @@ package platform
 import (
 	"fmt"
 	"gopkg.in/yaml.v3"
-	"io/ioutil"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -14,9 +14,10 @@ const DB = "db.yaml"
 const BinaryName = "main"
 
 type Instance struct {
-	Name string `yaml:"name"`
-	Port int    `yaml:"port"`
-	PID  int    `yaml:"pid"`
+	Name  string `yaml:"name"`
+	Port  int    `yaml:"port"`
+	PID   int    `yaml:"pid"`
+	Error string `yaml:"error"`
 }
 
 type InstanceManager struct {
@@ -28,7 +29,7 @@ func (im *InstanceManager) LoadFromFile(filePath string) error {
 	im.Lock.Lock()
 	defer im.Lock.Unlock()
 
-	yamlFile, err := ioutil.ReadFile(filePath)
+	yamlFile, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
@@ -51,7 +52,7 @@ func (im *InstanceManager) SaveToFile() error {
 		return err
 	}
 
-	err = ioutil.WriteFile(DB, yamlData, 0644)
+	err = os.WriteFile(DB, yamlData, 0644)
 	if err != nil {
 		return err
 	}
@@ -139,12 +140,7 @@ func (im *InstanceManager) GetInstanceStatus(name string) string {
 	if err != nil {
 		return "PID not found"
 	}
-	cmd := exec.Command("kill", "-0", strconv.Itoa(pid))
-	err = cmd.Run()
-	if err != nil {
-		return "stopped"
-	}
-	return "running"
+	return fmt.Sprintf("ruuning with PID: %d", pid)
 }
 
 func (im *InstanceManager) GetAllInstances() []*Instance {
@@ -153,6 +149,11 @@ func (im *InstanceManager) GetAllInstances() []*Instance {
 
 	instances := make([]*Instance, 0, len(im.Instances))
 	for _, instance := range im.Instances {
+		pid, err := getPID(instance.Port)
+		if err != nil {
+			instance.Error = "instance isn't running"
+		}
+		instance.PID = pid
 		instances = append(instances, instance)
 	}
 	return instances
