@@ -1,0 +1,17 @@
+[Unit]
+Description=Rubix Edge BIOS comes with default OS, non-upgradable
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=<working_dir>
+ExecStart=<working_dir>/rubix-bios server -p 1659 -r /data -a rubix-bios -d data -c config -a apps --prod --auth --arch <arch>
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=rubix-bios
+
+[Install]
+WantedBy=multi-user.target
