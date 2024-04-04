@@ -1,9 +1,13 @@
 package platform
 
 import (
+	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"io/ioutil"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
+	"os"
 	"strconv"
 )
 
@@ -28,6 +32,13 @@ func NewInstanceManagerHandler(im *InstanceManager, router *gin.Engine) *Instanc
 	handler.Router.GET("/api/read", handler.ReadYAMLFile)
 	handler.Router.GET("/api/get/pid", handler.GetPIDByPortHandler)
 
+	handler.Router.Any("/proxy/*path", handler.ProxyHandler)
+
+	handler.Router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Accept", "Authorization"},
+	}))
 	return handler
 }
 
@@ -112,7 +123,7 @@ func (h *InstanceManagerHandler) GetAllInstancesHandler(c *gin.Context) {
 }
 
 func (h *InstanceManagerHandler) ReadYAMLFile(c *gin.Context) {
-	yamlFile, err := ioutil.ReadFile(DB)
+	yamlFile, err := os.ReadFile(DB)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -134,4 +145,22 @@ func (h *InstanceManagerHandler) GetPIDByPortHandler(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"pid": pid})
+}
+
+func (h *InstanceManagerHandler) ProxyHandler(c *gin.Context) {
+	name := c.GetHeader("Instance-Name")
+	instance, exists := h.Instances[name]
+	if !exists {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Instance not found"})
+		return
+	}
+
+	target := fmt.Sprintf("%s:%d", instance.IP, instance.Port)
+	proxy := httputil.NewSingleHostReverseProxy(&url.URL{
+		Scheme: "http",
+		Host:   target,
+	})
+
+	c.Request.URL.Path = c.Param("path") // Include the endpoint path
+	proxy.ServeHTTP(c.Writer, c.Request)
 }

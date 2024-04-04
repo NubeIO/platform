@@ -21,7 +21,7 @@ func main() {
 	r := gin.New()
 
 	// Define a route
-	r.GET("/", func(c *gin.Context) {
+	r.GET("/hello", func(c *gin.Context) {
 		c.String(http.StatusOK, "Hello, World!")
 	})
 

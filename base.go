@@ -15,6 +15,7 @@ const BinaryName = "main"
 
 type Instance struct {
 	Name  string `yaml:"name"`
+	IP    string `yaml:"ip"`
 	Port  int    `yaml:"port"`
 	PID   int    `yaml:"pid"`
 	Error string `yaml:"error"`
