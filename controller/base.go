@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"github.com/NubeIO/lib-systemctl-go/systemctl"
+	"github.com/NubeIO/platform/config"
 	"github.com/NubeIO/platform/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -16,6 +17,7 @@ type Controller struct {
 	FileMode  int
 	Instances map[string]*Instance
 	Lock      sync.Mutex
+	Config    *config.Configuration
 }
 
 type Response struct {

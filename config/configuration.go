@@ -48,14 +48,14 @@ func (conf *Configuration) GetPort() string {
 }
 
 func (conf *Configuration) GetAbsDataDir() string {
-	return path.Join(conf.getGlobalDir(), conf.getDataDir())
+	return path.Join(conf.GetGlobalDir(), conf.getDataDir())
 }
 
 func (conf *Configuration) GetAbsConfigDir() string {
-	return path.Join(conf.getGlobalDir(), conf.getConfigDir())
+	return path.Join(conf.GetGlobalDir(), conf.getConfigDir())
 }
 
-func (conf *Configuration) getGlobalDir() string {
+func (conf *Configuration) GetGlobalDir() string {
 	rootDir := RootCmd.PersistentFlags().Lookup("root-dir").Value.String()
 	appDir := RootCmd.PersistentFlags().Lookup("app-dir").Value.String()
 	return path.Join(rootDir, appDir)

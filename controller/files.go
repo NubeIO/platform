@@ -25,7 +25,7 @@ type UploadResponse struct {
 	Destination string `json:"destination"`
 	File        string `json:"file"`
 	Size        string `json:"size"`
-	UploadTime  string `json:"upload_time"`
+	UploadTime  string `json:"uploadTime"`
 }
 
 func (inst *Controller) FileExists(c *gin.Context) {

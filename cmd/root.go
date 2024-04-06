@@ -32,7 +32,7 @@ var flgRoot struct {
 func init() {
 	RootCmd.PersistentFlags().BoolVarP(&flgRoot.prod, "prod", "", false, "prod")
 	RootCmd.PersistentFlags().BoolVarP(&flgRoot.auth, "auth", "", true, "auth")
-	RootCmd.PersistentFlags().IntVarP(&flgRoot.port, "port", "p", 1771, "port (default 1771)")
+	RootCmd.PersistentFlags().IntVarP(&flgRoot.port, "port", "p", 1772, "port (default 1772)")
 	RootCmd.PersistentFlags().StringVarP(&flgRoot.rootDir, "root-dir", "r", "./", "root dir") // in production it will be `/data`
 	RootCmd.PersistentFlags().StringVarP(&flgRoot.appDir, "app-dir", "a", "./", "app dir")    // in production it will be `rubix-bios`
 	RootCmd.PersistentFlags().StringVarP(&flgRoot.dataDir, "data-dir", "d", "data", "data dir")

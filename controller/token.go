@@ -3,16 +3,17 @@ package controller
 import (
 	"github.com/NubeIO/lib-uuid/uuid"
 	"github.com/NubeIO/nubeio-rubix-lib-auth-go/externaltoken"
-	interfaces2 "github.com/NubeIO/platform/interfaces"
+	"github.com/NubeIO/platform/interfaces"
+
 	"github.com/gin-gonic/gin"
 )
 
-func getBodyTokenCreate(c *gin.Context) (dto *interfaces2.TokenCreate, err error) {
+func getBodyTokenCreate(c *gin.Context) (dto *interfaces.TokenCreate, err error) {
 	err = c.ShouldBindJSON(&dto)
 	return dto, err
 }
 
-func getBodyTokenBlock(ctx *gin.Context) (dto *interfaces2.TokenBlock, err error) {
+func getBodyTokenBlock(ctx *gin.Context) (dto *interfaces.TokenBlock, err error) {
 	err = ctx.ShouldBindJSON(&dto)
 	return dto, err
 }

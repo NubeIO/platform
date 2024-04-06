@@ -1,4 +1,17 @@
-pod-1:
-    name: pod-1
-    ip: "127.0.0.1"
-    port: 8081
+example-instance:
+    name: example-instance
+    repo: https://example.com/repo
+    description: Example instance
+    port: 8080
+    transport: tcp
+    exec_start: start.sh
+    attach_working_dir_on_exec_start: true
+    environment_vars:
+        - ENV_VAR1=foo
+        - ENV_VAR2=bar
+    products:
+        - product1
+        - product2
+    arch:
+        - amd64
+        - arm64

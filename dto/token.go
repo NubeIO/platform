@@ -1,4 +1,10 @@
-package interfaces
+package dto
+
+type Token struct {
+	Name    string `json:"name" binding:"required"`
+	Token   string `json:"token" binding:"required"`
+	Blocked *bool  `json:"blocked"`
+}
 
 type TokenCreate struct {
 	Name    string `json:"name" binding:"required"`
@@ -7,9 +13,4 @@ type TokenCreate struct {
 
 type TokenBlock struct {
 	Blocked *bool `json:"blocked" binding:"required"`
-}
-
-type TokenResponse struct {
-	AccessToken string `json:"accessToken"`
-	TokenType   string `json:"tokenType"`
 }

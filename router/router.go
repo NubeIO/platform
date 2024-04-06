@@ -22,7 +22,7 @@ import (
 
 func NotFound() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		message := fmt.Sprintf("%s %s [%d]: %s", ctx.Request.Method, ctx.Request.URL, http.StatusNotFound, "rubix-bios: api not found")
+		message := fmt.Sprintf("%s %s [%d]: %s", ctx.Request.Method, ctx.Request.URL, http.StatusNotFound, "rubix-platform: api not found")
 		ctx.JSON(http.StatusNotFound, model.Message{Message: message})
 	}
 }
@@ -31,7 +31,7 @@ func Setup() *gin.Engine {
 	engine := gin.New()
 	// Set gin access logs
 	if viper.GetBool("gin.log.store") {
-		fileLocation := fmt.Sprintf("%s/rubix-bios.access.log", config.Config.GetAbsDataDir())
+		fileLocation := fmt.Sprintf("%s/rubix-platform.access.log", config.Config.GetAbsDataDir())
 		f, err := os.OpenFile(fileLocation, os.O_CREATE|os.O_WRONLY|os.O_APPEND, constants.Permission)
 		if err != nil {
 			logger.Logger.Errorf("Failed to create access log file: %v", err)
@@ -64,6 +64,7 @@ func Setup() *gin.Engine {
 		FileMode:  0755,
 		Instances: make(map[string]*controller.Instance),
 		Lock:      sync.Mutex{},
+		Config:    config.Config,
 	}
 
 	err := api.LoadFromFile("./db.yaml")
@@ -166,23 +167,13 @@ func Setup() *gin.Engine {
 		token.DELETE("/:uuid", api.DeleteToken)
 	}
 
-	apiRoutes.POST("/create", api.CreateInstance)
-	apiRoutes.GET("/start", api.StartInstanceHandler)
-	apiRoutes.GET("/stop", api.StopInstanceHandler)
-	apiRoutes.GET("/restart", api.RestartInstanceHandler)
-	apiRoutes.GET("/delete", api.DeleteInstanceHandler)
-	apiRoutes.GET("/status", api.GetInstanceStatusHandler)
-	apiRoutes.GET("/all", api.GetAllInstancesHandler)
-	apiRoutes.GET("/yaml", api.ReadYAMLFile)
-	apiRoutes.GET("/get/pid", api.GetPIDByPortHandler)
-
-	apiRoutes.Any("/proxy/*path", api.ProxyHandler)
-
-	apiRoutes.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"Origin", "Content-Type", "Accept", "Authorization"},
-	}))
+	apiRoutes.GET("/hosts", api.GetAllInstancesHandler)
+	apiRoutes.GET("/hosts/:name", api.GetInstancesHandler)
+	apiRoutes.POST("/hosts", api.CreateInstance)
+	apiRoutes.GET("/hosts/start", api.StartInstanceHandler)
+	apiRoutes.GET("/hosts/stop", api.StopInstanceHandler)
+	apiRoutes.GET("/hosts/restart", api.RestartInstanceHandler)
+	apiRoutes.DELETE("/hosts/:name", api.DeleteInstanceHandler)
 
 	return engine
 }
