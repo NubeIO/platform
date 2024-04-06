@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/NubeIO/nubeio-rubix-lib-auth-go/user"
-	"github.com/NubeIO/platform/interfaces"
+	"github.com/NubeIO/platform/model"
 	"github.com/NubeIO/platform/nerrors"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -24,7 +24,7 @@ func (inst *Controller) Login(c *gin.Context) {
 		responseHandler(nil, nerrors.NewErrUnauthorized(err.Error()), c, http.StatusUnauthorized)
 		return
 	}
-	responseHandler(interfaces.TokenResponse{AccessToken: q, TokenType: "JWT"}, err, c)
+	responseHandler(model.TokenResponse{AccessToken: q, TokenType: "JWT"}, err, c)
 }
 
 func (inst *Controller) UpdateUser(c *gin.Context) {

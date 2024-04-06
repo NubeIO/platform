@@ -5,6 +5,8 @@ import (
 	"github.com/NubeIO/lib-systemctl-go/systemctl"
 	"github.com/NubeIO/platform/config"
 	"github.com/NubeIO/platform/model"
+	"github.com/NubeIO/platform/services/info"
+	systeminfo "github.com/NubeIO/platform/services/system"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/url"
@@ -13,11 +15,13 @@ import (
 )
 
 type Controller struct {
-	SystemCtl *systemctl.SystemCtl
-	FileMode  int
-	Instances map[string]*Instance
-	Lock      sync.Mutex
-	Config    *config.Configuration
+	SystemCtl  *systemctl.SystemCtl
+	FileMode   int
+	Instances  map[string]*Instance
+	Lock       sync.Mutex
+	Config     *config.Configuration
+	SystemInfo systeminfo.System
+	Networking *info.System
 }
 
 type Response struct {

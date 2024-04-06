@@ -5,7 +5,7 @@ import (
 	"github.com/NubeIO/nubeio-rubix-lib-helpers-go/pkg/times/utilstime"
 	"github.com/NubeIO/platform/constants"
 	"github.com/NubeIO/platform/dto"
-	"github.com/NubeIO/platform/utils/crontab"
+	"github.com/NubeIO/platform/services/crontab"
 	"os"
 )
 

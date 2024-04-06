@@ -1,4 +1,4 @@
-package interfaces
+package model
 
 type TokenCreate struct {
 	Name    string `json:"name" binding:"required"`

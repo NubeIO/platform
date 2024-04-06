@@ -2,7 +2,7 @@ package installer
 
 import (
 	"github.com/NubeIO/lib-systemctl-go/systemctl"
-	"github.com/NubeIO/platform/rubixregistry"
+	"github.com/NubeIO/platform/services/rubixregistry"
 	"path"
 )
 

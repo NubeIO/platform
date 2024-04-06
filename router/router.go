@@ -9,6 +9,8 @@ import (
 	"github.com/NubeIO/platform/controller"
 	"github.com/NubeIO/platform/logger"
 	"github.com/NubeIO/platform/model"
+	"github.com/NubeIO/platform/services/info"
+	systeminfo "github.com/NubeIO/platform/services/system"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -58,13 +60,15 @@ func Setup() *gin.Engine {
 	}))
 
 	systemCtl := systemctl.New(false, 30)
-
+	systemInfo := systeminfo.New()
 	api := controller.Controller{
-		SystemCtl: systemCtl,
-		FileMode:  0755,
-		Instances: make(map[string]*controller.Instance),
-		Lock:      sync.Mutex{},
-		Config:    config.Config,
+		SystemCtl:  systemCtl,
+		FileMode:   0755,
+		Instances:  make(map[string]*controller.Instance),
+		Lock:       sync.Mutex{},
+		Config:     config.Config,
+		SystemInfo: systemInfo,
+		Networking: info.New(&info.System{}),
 	}
 
 	err := api.LoadFromFile("./db.yaml")
@@ -92,6 +96,7 @@ func Setup() *gin.Engine {
 
 	systemRoutes := apiRoutes.Group("/system")
 	{
+		systemRoutes.GET("/info", api.GetSystemInfo)
 		systemRoutes.POST("/reboot", api.RebootHost)
 	}
 
@@ -165,6 +170,56 @@ func Setup() *gin.Engine {
 		token.PUT("/:uuid/block", api.BlockToken)
 		token.PUT("/:uuid/regenerate", api.RegenerateToken)
 		token.DELETE("/:uuid", api.DeleteToken)
+	}
+
+	restartJobRoutes := apiRoutes.Group("/restart-jobs")
+	{
+		restartJobRoutes.GET("", api.GetRestartJob)
+		restartJobRoutes.PUT("", api.UpdateRestartJob)
+		restartJobRoutes.DELETE("unit/:unit", api.DeleteRestartJob)
+	}
+
+	networkingFirewallRoutes := apiRoutes.Group("/firewall")
+	{
+		networkingFirewallRoutes.GET("", api.UWFStatusList)
+		networkingFirewallRoutes.POST("/status", api.UWFStatus)
+		networkingFirewallRoutes.POST("/active", api.UWFActive)
+		networkingFirewallRoutes.POST("/enable", api.UWFEnable)
+		networkingFirewallRoutes.POST("/disable", api.UWFDisable)
+		networkingFirewallRoutes.POST("/port/open", api.UWFOpenPort)
+		networkingFirewallRoutes.POST("/port/close", api.UWFClosePort)
+	}
+
+	networkingRoutes := apiRoutes.Group("/info")
+	{
+
+		networkingRoutes.GET("/internet", api.InternetIP)
+
+		networkingNetworkRoutes := networkingRoutes.Group("networks")
+		{
+			networkingNetworkRoutes.POST("/restart", api.RestartNetworking)
+		}
+
+		networkingInterfaceRoutes := networkingRoutes.Group("interfaces")
+		{
+			networkingInterfaceRoutes.POST("/exists", api.DHCPPortExists)
+			networkingInterfaceRoutes.POST("/auto", api.DHCPSetAsAuto)
+			networkingInterfaceRoutes.POST("/static", api.DHCPSetStaticIP)
+			networkingInterfaceRoutes.POST("/reset", api.InterfaceUpDown)
+			networkingInterfaceRoutes.POST("/pp", api.InterfaceUp)
+			networkingInterfaceRoutes.POST("/down", api.InterfaceDown)
+		}
+
+		networkingFirewallRoutes := networkingRoutes.Group("/firewall")
+		{
+			networkingFirewallRoutes.GET("", api.UWFStatusList)
+			networkingFirewallRoutes.POST("/status", api.UWFStatus)
+			networkingFirewallRoutes.POST("/active", api.UWFActive)
+			networkingFirewallRoutes.POST("/enable", api.UWFEnable)
+			networkingFirewallRoutes.POST("/disable", api.UWFDisable)
+			networkingFirewallRoutes.POST("/port/open", api.UWFOpenPort)
+			networkingFirewallRoutes.POST("/port/close", api.UWFClosePort)
+		}
 	}
 
 	apiRoutes.GET("/hosts", api.GetAllInstancesHandler)
