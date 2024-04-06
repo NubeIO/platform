@@ -31,12 +31,28 @@ type System interface {
 	GetTopProcessesByCPUUsage(count int) ([]*topProcess, error)
 	GetTopProcessesByMemory(count int) ([]*topProcess, error)
 	GetHostUniqueID() (string, error) // try mac or system uuid
+	ExecuteMethods(methods []string) (map[string]interface{}, error)
 }
 
 type unixSystem struct{}
 
-func NewSystem() System {
+func New() System {
 	return &unixSystem{}
+}
+
+func (s *unixSystem) ExecuteMethods(methods []string) (map[string]interface{}, error) {
+	results := make(map[string]interface{})
+	for _, method := range methods {
+		switch method {
+		case "ip":
+			results["ip"] = s.GetIP()
+		case "uptime":
+			results["uptime"] = s.GetUptime()
+		default:
+			return nil, fmt.Errorf("method %s not found", method)
+		}
+	}
+	return results, nil
 }
 
 func (s *unixSystem) GetIP() string {

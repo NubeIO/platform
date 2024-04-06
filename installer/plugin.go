@@ -3,7 +3,7 @@ package installer
 import (
 	"errors"
 	"fmt"
-	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
+	"github.com/NubeIO/platform/dto"
 	"io/ioutil"
 	"strings"
 )

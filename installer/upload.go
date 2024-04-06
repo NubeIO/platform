@@ -1,7 +1,7 @@
 package installer
 
 import (
-	"github.com/NubeIO/nubeio-rubix-lib-models-go/dto"
+	"github.com/NubeIO/platform/dto"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"mime/multipart"

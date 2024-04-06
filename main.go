@@ -3,7 +3,7 @@ package main
 import (
 	"embed"
 	"github.com/NubeIO/platform/cmd"
-	"github.com/NubeIO/platform/release"
+	"github.com/NubeIO/platform/utils/release"
 )
 
 //go:embed systemd/*

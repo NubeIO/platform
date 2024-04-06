@@ -6,7 +6,7 @@ import (
 )
 
 func TestNewSystem(t *testing.T) {
-	s := NewSystem()
+	s := New()
 
 	fmt.Println(s.GetHostUniqueID())
 }

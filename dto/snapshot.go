@@ -1,7 +1,6 @@
 package dto
 
 import (
-	"github.com/NubeIO/nubeio-rubix-lib-models-go/datatype"
 	"time"
 )
 
@@ -22,6 +21,16 @@ type RestoreSnapshot struct {
 }
 
 type SnapshotStatus struct {
-	CreateStatus  datatype.CreateStatus  `json:"create_status"`
-	RestoreStatus datatype.RestoreStatus `json:"restore_status"`
+	CreateStatus  CreateStatus  `json:"create_status"`
+	RestoreStatus RestoreStatus `json:"restore_status"`
 }
+
+type RestoreStatus string
+type CreateStatus string
+
+const (
+	CreateNotAvailable CreateStatus = "N/A"
+	Creating           CreateStatus = "Creating"
+	Created            CreateStatus = "Created"
+	CreateFailed       CreateStatus = "Failed"
+)
