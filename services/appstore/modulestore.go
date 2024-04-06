@@ -6,7 +6,6 @@ import (
 	"github.com/NubeIO/lib-files/fileutils"
 	"github.com/NubeIO/lib-utils-go/nversion"
 	"github.com/NubeIO/platform/dto"
-	"github.com/NubeIO/platform/global"
 	"io/fs"
 	"os"
 	"path"
@@ -18,7 +17,7 @@ func (inst *Store) GetModulesStoreModules() ([]dto.Module, error) {
 	modules := make([]dto.Module, 0)
 
 	var files []string
-	err := filepath.WalkDir(global.Installer.GetModulesStorePath(), func(p string, d fs.DirEntry, err error) error {
+	err := filepath.WalkDir(inst.Installer.GetModulesStorePath(), func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -47,7 +46,7 @@ func (inst *Store) GetModulesStoreModules() ([]dto.Module, error) {
 func (inst *Store) UploadModuleStoreModule(app *dto.Upload) (*UploadResponse, error) {
 	var file = app.File
 	uploadResponse := &UploadResponse{}
-	resp, err := global.Installer.Upload(file)
+	resp, err := inst.Installer.Upload(file)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("upload module: %s", err.Error()))
 	}
@@ -62,8 +61,8 @@ func (inst *Store) UploadModuleStoreModule(app *dto.Upload) (*UploadResponse, er
 	appName := fileParts[0]
 	appVersion := fileParts[1]
 	fileName := fileParts[3]
-	moduleStorePath := global.Installer.GetModulesStoreWithModuleVersionFolder(appName, appVersion)
-	_ = os.MkdirAll(moduleStorePath, os.FileMode(global.Installer.FileMode))
+	moduleStorePath := inst.Installer.GetModulesStoreWithModuleVersionFolder(appName, appVersion)
+	_ = os.MkdirAll(moduleStorePath, os.FileMode(inst.Installer.FileMode))
 
 	destination := path.Join(moduleStorePath, fileName)
 	check := fileutils.FileExists(source)

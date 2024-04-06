@@ -9,6 +9,7 @@ import (
 	"github.com/NubeIO/platform/controller"
 	"github.com/NubeIO/platform/logger"
 	"github.com/NubeIO/platform/model"
+	"github.com/NubeIO/platform/services/appstore"
 	"github.com/NubeIO/platform/services/info"
 	systeminfo "github.com/NubeIO/platform/services/system"
 	"github.com/gin-contrib/cors"
@@ -69,6 +70,7 @@ func Setup() *gin.Engine {
 		Config:     config.Config,
 		SystemInfo: systemInfo,
 		Networking: info.New(&info.System{}),
+		Store:      appstore.New(&appstore.Store{}),
 	}
 
 	err := api.LoadFromFile("./db.yaml")
@@ -219,6 +221,27 @@ func Setup() *gin.Engine {
 			networkingFirewallRoutes.POST("/disable", api.UWFDisable)
 			networkingFirewallRoutes.POST("/port/open", api.UWFOpenPort)
 			networkingFirewallRoutes.POST("/port/close", api.UWFClosePort)
+		}
+	}
+
+	storeRoutes := apiRoutes.Group("/store")
+	{
+		appStoreRoutes := storeRoutes.Group("/apps")
+		{
+			appStoreRoutes.POST("", api.UploadAddOnAppStore)
+			appStoreRoutes.GET("/exists", api.CheckAppExistence)
+		}
+
+		pluginStoreRoutes := storeRoutes.Group("/plugins")
+		{
+			pluginStoreRoutes.GET("", api.GetPluginsStorePlugins)
+			pluginStoreRoutes.POST("", api.UploadPluginStorePlugin)
+		}
+
+		moduleStoreRoutes := storeRoutes.Group("/modules")
+		{
+			moduleStoreRoutes.GET("", api.GetModulesStoreModules)
+			moduleStoreRoutes.POST("", api.UploadModuleStoreModule)
 		}
 	}
 

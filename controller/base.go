@@ -5,6 +5,7 @@ import (
 	"github.com/NubeIO/lib-systemctl-go/systemctl"
 	"github.com/NubeIO/platform/config"
 	"github.com/NubeIO/platform/model"
+	"github.com/NubeIO/platform/services/appstore"
 	"github.com/NubeIO/platform/services/info"
 	systeminfo "github.com/NubeIO/platform/services/system"
 	"github.com/gin-gonic/gin"
@@ -22,6 +23,7 @@ type Controller struct {
 	Config     *config.Configuration
 	SystemInfo systeminfo.System
 	Networking *info.System
+	Store      *appstore.Store
 }
 
 type Response struct {

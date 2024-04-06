@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/NubeIO/lib-files/fileutils"
 	"github.com/NubeIO/platform/dto"
-	"github.com/NubeIO/platform/global"
 	"os"
 	"path"
 )
@@ -28,7 +27,7 @@ func (inst *Store) UploadAddOnAppStore(app *dto.Upload) (*UploadResponse, error)
 	if app.Arch == "" {
 		return nil, errors.New("arch_type can not be empty, try armv7 amd64")
 	}
-	err := os.MkdirAll(global.Installer.GetAppsStoreAppPathWithArchVersion(app.Name, app.Arch, app.Version), os.FileMode(global.Installer.FileMode))
+	err := os.MkdirAll(inst.Installer.GetAppsStoreAppPathWithArchVersion(app.Name, app.Arch, app.Version), os.FileMode(inst.Installer.FileMode))
 	if err != nil {
 		return nil, err
 	}
@@ -40,14 +39,14 @@ func (inst *Store) UploadAddOnAppStore(app *dto.Upload) (*UploadResponse, error)
 		TmpFile:      "",
 		UploadedFile: "",
 	}
-	resp, err := global.Installer.Upload(file)
+	resp, err := inst.Installer.Upload(file)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("upload app: %s", err.Error()))
 	}
 	defer os.RemoveAll(resp.TmpFile)
 	uploadResp.TmpFile = resp.TmpFile
 	source := resp.UploadedFile
-	destination := path.Join(global.Installer.GetAppsStoreAppPathWithArchVersion(app.Name, app.Arch, app.Version), resp.FileName)
+	destination := path.Join(inst.Installer.GetAppsStoreAppPathWithArchVersion(app.Name, app.Arch, app.Version), resp.FileName)
 	check := fileutils.FileExists(source)
 	if !check {
 		return nil, errors.New(fmt.Sprintf("upload file tmp dir not found: %s", source))
