@@ -2,6 +2,7 @@ package appstore
 
 import (
 	"github.com/NubeIO/platform/services/installer"
+	"github.com/NubeIO/platform/services/rubixregistry"
 	log "github.com/sirupsen/logrus"
 	"os"
 )
@@ -12,12 +13,15 @@ type Store struct {
 	Installer *installer.Installer
 }
 
-func New(store *Store) *Store {
+func New(rootDir string) *Store {
+	registry := rubixregistry.New(rootDir)
+	store := &Store{
+		Installer: installer.New(&installer.Installer{}, registry),
+	}
 	err := store.initMakeAllDirs()
 	if err != nil {
 		log.Fatal(err)
 	}
-	store.Installer = installer.New(nil, nil)
 	return store
 }
 

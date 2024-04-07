@@ -70,9 +70,8 @@ func Setup() *gin.Engine {
 		Config:     config.Config,
 		SystemInfo: systemInfo,
 		Networking: info.New(&info.System{}),
-		Store:      appstore.New(&appstore.Store{}),
+		Store:      appstore.New(fmt.Sprintf("/%s", config.Config.GetAbsDataDir())),
 	}
-
 	err := api.LoadFromFile("./db.yaml")
 	if err != nil {
 		log.Fatal(err)

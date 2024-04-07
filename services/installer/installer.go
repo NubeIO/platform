@@ -19,9 +19,6 @@ type Installer struct {
 }
 
 func New(app *Installer, registry *rubixregistry.RubixRegistry) *Installer {
-	if app == nil {
-		app = &Installer{}
-	}
 	app.RootDir = registry.RootDir
 	app.AppsDownloadDir = registry.AppsDownloadDir
 	app.AppsInstallDir = registry.AppsInstallDir
